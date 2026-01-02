@@ -1,44 +1,36 @@
 # For more information about using CMake with Android Studio, read the
 # documentation: https://d.android.com/studio/projects/add-native-code.html
 
-# Sets the minimum version of CMake required to build the native library.
+cmake_minimum_required(VERSION 3.22.1)
 
-cmake_minimum_required(VERSION 3.4.1)
+project("skiaseekbar")
 
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
+# Creates your game shared library. The name must be the same as the
+# one used for loading in your Kotlin/Java or AndroidManifest.txt files.
+add_library(skiaseekbar SHARED
+        main.cpp
+        AndroidOut.cpp
+        Renderer.cpp
+        Shader.cpp
+        TextureAsset.cpp
+        Utility.cpp)
 
-add_library( # Sets the name of the library.
-             native-lib
+# Searches for a package provided by the game activity dependency
+find_package(game-activity REQUIRED CONFIG)
 
-             # Sets the library as a shared library.
-             SHARED
+# Forces the linker to keep the JNI entry point for GameActivity
+set(CMAKE_SHARED_LINKER_FLAGS
+        "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
 
-             # Provides a relative path to your source file(s).
-             native-lib.cpp )
+# Configure libraries CMake uses to link your target library.
+target_link_libraries(skiaseekbar
+        # The game activity
+        game-activity::game-activity_static
 
-# Searches for a specified prebuilt library and stores the path as a
-# variable. Because CMake includes system libraries in the search path by
-# default, you only need to specify the name of the public NDK library
-# you want to add. CMake verifies that the library exists before
-# completing its build.
-
-find_library( # Sets the name of the path variable.
-              log-lib
-
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
-
-# Specifies libraries CMake should link to your target library. You
-# can link multiple libraries, such as libraries you define in this
-# build script, prebuilt third-party libraries, or system libraries.
-
-target_link_libraries( # Specifies the target library.
-                       native-lib
-
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+        # EGL and other dependent libraries required for drawing
+        # and interacting with Android system
+        EGL
+        GLESv3
+        jnigraphics
+        android
+        log)
