@@ -2,7 +2,7 @@
 #define ANDROIDGLINVESTIGATIONS_MODEL_H
 
 #include <vector>
-#include "TextureAsset.h"
+#include "../Texture/TextureAsset.h"
 
 union Vector3 {
     struct {

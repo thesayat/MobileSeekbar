@@ -4,26 +4,26 @@
 #include <EGL/egl.h>
 #include <memory>
 
-#include "Model.h"
-#include "Shader.h"
+#include "Seekbar/AppPlaybackModel.h"
+#include "UI/SeekbarStyle.h"
+#include "UI/SeekbarView.h"
+#include "Input/SeekbarController.h"
+#include "Render/SkiaRasterTexture.h"
+#include "Render/FullscreenTexturedQuad.h"
+#include "Animation/CircleProgress.h"
+#include "Shader/Shader.h"
 
 struct android_app;
 
 class Renderer {
 public:
-    /*!
-     * @param pApp the android_app this Renderer belongs to, needed to configure GL
-     */
-    inline Renderer(android_app *pApp) :
-            app_(pApp),
-            display_(EGL_NO_DISPLAY),
-            surface_(EGL_NO_SURFACE),
-            context_(EGL_NO_CONTEXT),
-            width_(0),
-            height_(0),
-            shaderNeedsNewProjectionMatrix_(true) {
-        initRenderer();
-    }
+
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
+    Renderer(Renderer&&) = delete;
+    Renderer& operator=(Renderer&&) = delete;
+
+    Renderer(android_app *pApp);
 
     virtual ~Renderer();
 
@@ -52,12 +52,6 @@ private:
      */
     void updateRenderArea();
 
-    /*!
-     * Creates the models for this sample. You'd likely load a scene configuration from a file or
-     * use some other setup logic in your full game.
-     */
-    void createModels();
-
     android_app *app_;
     EGLDisplay display_;
     EGLSurface surface_;
@@ -68,7 +62,15 @@ private:
     bool shaderNeedsNewProjectionMatrix_;
 
     std::unique_ptr<Shader> shader_;
-    std::vector<Model> models_;
+
+    AppPlaybackModel playbackModel;
+
+    SeekbarStyle seekbarStyle_;
+    SeekbarController seekbarController_;
+    SeekbarView seekbarView_;
+    SkiaRasterTexture skiaRasterTex_;
+    FullscreenTexturedQuad fullscreenQuad_;
+    CircleProgress circleProgress_;
 };
 
 #endif //ANDROIDGLINVESTIGATIONS_RENDERER_H

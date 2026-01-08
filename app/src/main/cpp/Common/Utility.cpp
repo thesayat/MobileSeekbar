@@ -1,5 +1,5 @@
 #include "Utility.h"
-#include "AndroidOut.h"
+#include "../AndroidDebug/AndroidOut.h"
 
 #include <GLES3/gl3.h>
 

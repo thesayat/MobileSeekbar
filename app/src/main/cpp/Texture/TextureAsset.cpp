@@ -1,7 +1,12 @@
 #include <android/imagedecoder.h>
 #include "TextureAsset.h"
-#include "AndroidOut.h"
-#include "Utility.h"
+#include "../AndroidDebug/AndroidOut.h"
+#include "../Common/Utility.h"
+
+std::shared_ptr<TextureAsset>
+TextureAsset::wrapExisting(GLuint textureId, bool takeOwnership) {
+    return std::shared_ptr<TextureAsset>(new TextureAsset(textureId, takeOwnership));
+}
 
 std::shared_ptr<TextureAsset>
 TextureAsset::loadAsset(AAssetManager *assetManager, const std::string &assetPath) {
@@ -70,11 +75,12 @@ TextureAsset::loadAsset(AAssetManager *assetManager, const std::string &assetPat
     AAsset_close(pAndroidRobotPng);
 
     // Create a shared pointer so it can be cleaned up easily/automatically
-    return std::shared_ptr<TextureAsset>(new TextureAsset(textureId));
+    return std::shared_ptr<TextureAsset>(new TextureAsset(textureId, true));
 }
 
 TextureAsset::~TextureAsset() {
-    // return texture resources
-    glDeleteTextures(1, &textureID_);
+    if (takeOwnership_ && textureID_ != 0) {
+        glDeleteTextures(1, &textureID_);
+    }
     textureID_ = 0;
 }

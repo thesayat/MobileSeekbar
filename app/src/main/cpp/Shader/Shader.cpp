@@ -1,8 +1,8 @@
 #include "Shader.h"
 
-#include "AndroidOut.h"
-#include "Model.h"
-#include "Utility.h"
+#include "../AndroidDebug/AndroidOut.h"
+#include "../Model/Model.h"
+#include "../Common/Utility.h"
 
 Shader *Shader::loadShader(
         const std::string &vertexSource,
@@ -141,7 +141,7 @@ void Shader::drawModel(const Model &model) const {
     // Setup the texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, model.getTexture().getTextureID());
-
+    glUniform1i(glGetUniformLocation(program_, "uTexture"), 0);
     // Draw as indexed triangles
     glDrawElements(GL_TRIANGLES, model.getIndexCount(), GL_UNSIGNED_SHORT, model.getIndexData());
 

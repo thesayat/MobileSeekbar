@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/third_party/skia"]
+	path = app/src/main/cpp/third_party/skia
+	url = https://github.com/thesayat/SkiaLib.git

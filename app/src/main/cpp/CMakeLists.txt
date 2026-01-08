@@ -1,19 +1,38 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html
-
 cmake_minimum_required(VERSION 3.22.1)
 
 project("skiaseekbar")
 
-# Creates your game shared library. The name must be the same as the
-# one used for loading in your Kotlin/Java or AndroidManifest.txt files.
 add_library(skiaseekbar SHARED
         main.cpp
-        AndroidOut.cpp
+        AndroidDebug/AndroidOut.cpp
         Renderer.cpp
-        Shader.cpp
-        TextureAsset.cpp
-        Utility.cpp)
+        Shader/Shader.cpp
+        Texture/TextureAsset.cpp
+        Common/Utility.cpp
+        UI/SeekbarLayout.cpp
+        UI/SeekbarView.cpp
+        Input/SeekbarController.cpp
+        Render/SkiaRasterTexture.cpp
+        Render/FullscreenTexturedQuad.cpp
+        Animation/CircleProgress.cpp
+)
+
+
+# ---- Skia (prebuilt) ----
+set(SKIA_ROOT ${CMAKE_CURRENT_LIST_DIR}/third_party/skia)
+set(SKIA_INCLUDE ${SKIA_ROOT}/include)
+set(SKIA_GEN     ${SKIA_ROOT}/gen)
+set(SKIA_LIB_DIR ${SKIA_ROOT}/lib/${ANDROID_ABI})
+
+add_library(skia STATIC IMPORTED)
+set_target_properties(skia PROPERTIES
+        IMPORTED_LOCATION ${SKIA_LIB_DIR}/libskia.a
+)
+
+target_include_directories(skiaseekbar PRIVATE
+        ${SKIA_GEN}
+        ${SKIA_INCLUDE}
+)
 
 # Searches for a package provided by the game activity dependency
 find_package(game-activity REQUIRED CONFIG)
@@ -22,13 +41,9 @@ find_package(game-activity REQUIRED CONFIG)
 set(CMAKE_SHARED_LINKER_FLAGS
         "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
 
-# Configure libraries CMake uses to link your target library.
 target_link_libraries(skiaseekbar
-        # The game activity
         game-activity::game-activity_static
-
-        # EGL and other dependent libraries required for drawing
-        # and interacting with Android system
+        skia
         EGL
         GLESv3
         jnigraphics
