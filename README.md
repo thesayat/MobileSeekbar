@@ -45,6 +45,23 @@ The project uses **CMake** to generate build files and renders the final Skia ou
 
 ---
 
+## Repository / Dependencies (Git submodules)
+
+This repository includes a **Git submodule** that contains third-party dependencies, including the **Skia library** (and related build files/scripts).
+
+### Clone with submodules
+
+To clone the repository **and fetch all submodules** in one step:
+
+```bash
+git clone --recurse-submodules https://github.com/thesayat/MobileSeekbar.git
+```
+
+If you already cloned the repo without submodules, initialize and update them with:
+
+```bash
+git submodule update --init --recursive
+```
 ## High-Level Architecture
 
 The project is split into small, single-responsibility modules:
